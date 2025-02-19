@@ -1,0 +1,12 @@
+# reset_vector: location where processor starts reading instructions from.
+reset:
+  address: 0x00000000
+
+# No nmi needed since there's no nmi present
+# mtime and mtimecmp not implemented
+mtime:
+  implemented: False
+mtimecmp:
+  implemented: False
+nmi:
+  implemented: false
