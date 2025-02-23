@@ -1,2 +1,7 @@
 /riscof_work
 **/__pycache__
+**/obj_dir/
+**.vcd
+vivado*
+**/vivado*
+**/.Xil
