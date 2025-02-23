@@ -8,5 +8,6 @@ mtime:
   implemented: False
 mtimecmp:
   implemented: False
+# Required by framework schema, even if unused
 nmi:
-  implemented: false
+  label: nmi_vector  # Placeholder for NMI handler (not used in code)
