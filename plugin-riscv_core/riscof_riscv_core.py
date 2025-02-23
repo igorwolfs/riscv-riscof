@@ -76,7 +76,10 @@ class riscv_core(pluginTemplate):
 			-I '+self.pluginpath+'/env/\
 			-I ' + archtest_env + ' {2} -o {3} {4}'
 
-		# add more utility snippets here
+		# ---- RISCV_CORE -----
+		# Verilate model
+		execute	= 'sh ./sim/sim_setup.sh'
+		utils.shellCommand(execute).run()
 
 	def build(self, isa_yaml, platform_yaml):
 
@@ -108,7 +111,6 @@ class riscv_core(pluginTemplate):
 		self.compile_cmd = self.compile_cmd+' -mabi='+('lp64 ' if 64 in ispec['supported_xlen'] else 'ilp32 ')
 
 	def runTests(self, testList):
-
 		# Delete Makefile if it already exists.
 		if os.path.exists(self.work_dir+ "/Makefile." + self.name[:-1]):
 			os.remove(self.work_dir+ "/Makefile." + self.name[:-1])
