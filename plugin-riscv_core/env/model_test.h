@@ -1,6 +1,3 @@
-// model_test.h ported to the NEORV32 RISC-V Processor
-// SPDX-License-Identifier: BSD-3-Clause
-
 #ifndef _COMPLIANCE_MODEL_H
 #define _COMPLIANCE_MODEL_H
 
@@ -18,7 +15,8 @@
 #define RVMODEL_HALT                                   \
     signature_dump:                                    \
       la   a0, begin_signature;                        \
-      la   a1, end_signature;                          \
+      la   a1, sig_end_canary;                         \
+      addi a1, a1, 4;                         \
       li   a2, 0xF0000004;                             \
     signature_dump_loop:                               \
       bge  a0, a1, signature_dump_end;                 \

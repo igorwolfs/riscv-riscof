@@ -274,3 +274,24 @@ make: *** [makefile:23: ../neorv32/sw/image_gen/image_gen] Error 127
 It seems like the .vhd testbench has no permission to load the file into memory.
 
 Fixed permissions, everything works.
+
+# Assembly code description
+```C
+/**** fixed length LA macro; alignment and rvc/norvc unknown before execution ****/
+#define LA(reg,val)     ;\
+    .ifnc(reg, X0)       ;\
+        .option push    ;\
+        .option rvc     ;\
+        .align UNROLLSZ ;\
+        .option norvc   ;\
+        la reg,val      ;\
+        .align UNROLLSZ ;\
+        .option pop     ;\
+    .endif
+    
+/* RVTEST_SIGBASE(reg, label) initializes to label and clears offset */
+#define RVTEST_SIGBASE(_R,_TAG)			;\
+  LA(_R,_TAG)					;\
+  .set offset,0
+```
+Loads the address from the _TAG into _R.
