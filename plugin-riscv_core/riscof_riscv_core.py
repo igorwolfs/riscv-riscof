@@ -81,6 +81,7 @@ class riscv_core(pluginTemplate):
 		execute	= 'sh ./sim/sim_setup.sh'
 		utils.shellCommand(execute).run()
 
+
 	def build(self, isa_yaml, platform_yaml):
 
 		# load the isa yaml as a dictionary in python.
@@ -111,27 +112,19 @@ class riscv_core(pluginTemplate):
 		self.compile_cmd = self.compile_cmd+' -mabi='+('lp64 ' if 64 in ispec['supported_xlen'] else 'ilp32 ')
 
 	def runTests(self, testList):
-		# Delete Makefile if it already exists.
-		if os.path.exists(self.work_dir+ "/Makefile." + self.name[:-1]):
-			os.remove(self.work_dir+ "/Makefile." + self.name[:-1])
-		# create an instance the makeUtil class that we will use to create targets.
-		make = utils.makeUtil(makefilePath=os.path.join(self.work_dir, "Makefile." + self.name[:-1]))
 
-		# set the make command that will be used. The num_jobs parameter was set in the __init__
-		# function earlier
-		make.makeCommand = 'make -k -j' + self.num_jobs
-
-		# we will iterate over each entry in the testList. Each entry node will be refered to by the
+		# we will iterate over each entry in the testList. Each entry node will be referred to by the
 		# variable testname.
-		for idx, testname in enumerate(testList):
+		for testname in testList:
+			print(f"TESTNAME: {testname}")
+			logger.debug('Running Test: {0} on DUT'.format(testname))
 			# for each testname we get all its fields (as described by the testList format)
 			testentry = testList[testname]
 
 			# we capture the path to the assembly file of this test
 			test = testentry['test_path']
 
-			# capture the directory where the artifacts of this test will be dumped/created. RISCOF is
-			# going to look into this directory for the signature files
+			# capture the directory where the artifacts of this test will be dumped/created.
 			test_dir = testentry['work_dir']
 
 			# name of the elf file after compilation of the test
@@ -141,47 +134,62 @@ class riscv_core(pluginTemplate):
 			# be named as DUT-<dut-name>.signature. The below variable creates an absolute path of
 			# signature file.
 			sig_file = os.path.join(test_dir, self.name[:-1] + ".signature")
-			log_file = os.path.join(test_dir, self.name[:-1] + ".log")
 
 			# for each test there are specific compile macros that need to be enabled. The macros in
 			# the testList node only contain the macros/values. For the gcc toolchain we need to
 			# prefix with "-D". The following does precisely that.
-			compile_macros= ' -D' + " -D".join(testentry['macros'])
+			compile_macros = ' -D' + " -D".join(testentry['macros'])
+
+			# collect the march string required for the compiler
+			marchstr = testentry['isa'].lower()
 
 			# substitute all variables in the compile command that we created in the initialize
 			# function
-			cmd = self.compile_cmd.format(testentry['isa'].lower(), self.xlen, test, elf, compile_macros)
+			cmd = self.compile_cmd.format(marchstr, self.xlen, test, elf, compile_macros)
 
-		# if the user wants to disable running the tests and only compile the tests, then
-		# the "else" clause is executed below assigning the sim command to simple no action
-		# echo statement.
-			if self.target_run:
-				# set up the simulation command. Template is for spike. Please change.
-				simcmd = self.dut_exe + ' -m8796093022208 --isa={0} +signature={1} +signature-granularity=4 {2}'.format(self.isa, sig_file, elf)
-				# -m: creates memory region (8796093022208 bytes)
-				simcmd = simcmd + ';' + self.dut_exe + ' -m8796093022208 --isa={0} --log-commits -l my.elf 2> {1}'.format(self.isa, log_file)
-			else:
-				simcmd = 'echo "NO RUN"'
+			# just a simple logger statement that shows up on the terminal
+			logger.debug('Compiling test: ' + test)
 
-				# concatenate all commands that need to be executed within a make-target.
-				execute = '@cd {0}; {1}; {2};'.format(testentry['work_dir'], cmd, simcmd)
-				if (idx < 2):
-					print(f"---------------------------------------------------------------------------------------------------------------")
-					print(f"\r\ntestname {testname} \r\nexecuting: \r\n{execute}")
-					print(f"---------------------------------------------------------------------------------------------------------------")
-				# create a target. The makeutil will create a target with the name "TARGET<num>" where num
-				# starts from 0 and increments automatically for each new target that is added
-				make.add_target(execute)
+			# the following command spawns a process to run the compile command. Note here, we are
+			# changing the directory for this command to that pointed by test_dir. If you would like
+			# the artifacts to be dumped else where change the test_dir variable to the path of your
+			# choice.
+			utils.shellCommand(cmd).run(cwd=test_dir)
 
-		# if you would like to exit the framework once the makefile generation is complete uncomment the
-		# following line. Note this will prevent any signature checking or report generation.
-		#raise SystemExit
+			# for debug purposes if you would like stop the DUT plugin after compilation, you can
+			# comment out the lines below and raise a SystemExit
 
-		# once the make-targets are done and the makefile has been created, run all the targets in
-		# parallel using the make command set above.
-		make.execute_all(self.work_dir)
+			# build the command for running the elf on the DUT. In this case we use spike and indicate
+			# the isa arg that we parsed in the build stage, elf filename and signature filename.
+			# Template is for spike. Please change for your DUT
+		
+	        # ---- RISCV_CORE-specific ----
+
+			print(f"Execute: test_dir: {test_dir}")
+			print(f"SIG PATH: {sig_file}")
+			print(f"WORK_DIRECTORY: {self.work_dir}")
+			print(f"SUITE_DIR: {self.suite_dir}")
+			sim_dir = os.path.join(os.path.dirname(self.work_dir), "sim")
+			print(f"SIM_DIR: {sim_dir}")
+			# launch the execute command. Change the test_dir if required.
+			# Convert to hex
+			execute = "riscv32-unknown-elf-objcopy my.elf -O binary my.bin"
+			utils.shellCommand(execute).run(cwd=test_dir)
+			# Convert to readable format for readh in sysver
+			execute = "hexdump -v -e '1/4 \"%08x\n\"' my.bin > my.hex"
+			utils.shellCommand(execute).run(cwd=test_dir)
+			# OPTIONAL: disassemble
+			execute = "riscv32-unknown-elf-objdump -d my.elf > my.txt"
+			utils.shellCommand(execute).run(cwd=test_dir)
+			# Run simulation, load hex and write sigfile
+			execute = f"./obj_dir/Vtop_tb +MEM_PATH=\"{test_dir}/my.hex\" +SIG_PATH=\"{sig_file}\""
+
+			utils.shellCommand(execute).run(cwd=sim_dir)
+			# post-processing steps can be added here in the template below
+			#postprocess = 'mv {0} temp.sig'.format(sig_file)'
+			#utils.shellCommand(postprocess).run(cwd=test_dir)
 
 		# if target runs are not required then we simply exit as this point after running all
 		# the makefile targets.
 		if not self.target_run:
-			raise SystemExit(0)
+			raise SystemExit
