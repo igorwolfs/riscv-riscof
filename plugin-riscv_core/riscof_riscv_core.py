@@ -171,6 +171,8 @@ class riscv_core(pluginTemplate):
 			print(f"SUITE_DIR: {self.suite_dir}")
 			sim_dir = os.path.join(os.path.dirname(self.work_dir), "sim")
 			print(f"SIM_DIR: {sim_dir}")
+			log_file = os.path.join(test_dir, "my.log")
+			print(f"LOG_FILE: {log_file}")
 			# launch the execute command. Change the test_dir if required.
 			# Convert to hex
 			execute = "riscv32-unknown-elf-objcopy my.elf -O binary my.bin"
@@ -182,7 +184,7 @@ class riscv_core(pluginTemplate):
 			execute = "riscv32-unknown-elf-objdump -d my.elf > my.txt"
 			utils.shellCommand(execute).run(cwd=test_dir)
 			# Run simulation, load hex and write sigfile
-			execute = f"./obj_dir/Vtop_tb +MEM_PATH=\"{test_dir}/my.hex\" +SIG_PATH=\"{sig_file}\""
+			execute = f"./obj_dir/Vtop_tb +MEM_PATH=\"{test_dir}/my.hex\" +SIG_PATH=\"{sig_file}\" +SIGLOG_PATH=\"{log_file}\""
 
 			utils.shellCommand(execute).run(cwd=sim_dir)
 			# post-processing steps can be added here in the template below
