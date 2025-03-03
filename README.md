@@ -5,7 +5,7 @@ Sail is used as the reference model.
 
 ## Setup
 
-Check the riscof documentation here: https://riscof.readthedocs.io/en/stable/installation.html
+Check the riscof documentation [here] (https://riscof.readthedocs.io/en/stable/installation.html)
 
 ## Running the tests
 ```bash
