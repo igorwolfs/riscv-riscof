@@ -115,8 +115,8 @@ class riscv_core(pluginTemplate):
 
 		# we will iterate over each entry in the testList. Each entry node will be referred to by the
 		# variable testname.
-		for testname in testList:
-			print(f"TESTNAME: {testname}")
+		for idx, testname in enumerate(testList):
+			print(f"TESTNAME: {testname} [{idx} of {len(testList)}]")
 			logger.debug('Running Test: {0} on DUT'.format(testname))
 			# for each testname we get all its fields (as described by the testList format)
 			testentry = testList[testname]

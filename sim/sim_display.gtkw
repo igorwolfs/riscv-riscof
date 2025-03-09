@@ -1,0 +1,31 @@
+[*]
+[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
+[*] Sun Mar  9 09:45:03 2025
+[*]
+[dumpfile] "/home/iwolfs/Work/Projects/fpga_project/risc5/riscv-riscof/sim/control.vcd"
+[dumpfile_mtime] "Sun Mar  9 09:43:29 2025"
+[dumpfile_size] 112117999
+[savefile] "/home/iwolfs/Work/Projects/fpga_project/risc5/riscv-riscof/sim/sim_display.gtkw"
+[timestart] 0
+[size] 1854 1121
+[pos] -27 -24
+*-15.000000 14700 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.top_tb.
+[treeopen] TOP.top_tb.riscv_mcu_inst.
+[sst_width] 278
+[signals_width] 249
+[sst_expanded] 1
+[sst_vpaned_height] 338
+@28
+TOP.top_tb.riscv_mcu_inst.bus_interconnect_inst.ACLK
+TOP.top_tb.riscv_mcu_inst.bus_interconnect_inst.ARESETN
+@22
+TOP.top_tb.riscv_mcu_inst.bus_interconnect_inst.ADDR_RANGE0_END[31:0]
+TOP.top_tb.riscv_mcu_inst.bus_interconnect_inst.ADDR_RANGE0_START[31:0]
+TOP.top_tb.riscv_mcu_inst.bus_interconnect_inst.ADDR_RANGE1_END[31:0]
+TOP.top_tb.riscv_mcu_inst.bus_interconnect_inst.ADDR_RANGE1_START[31:0]
+TOP.top_tb.riscv_mcu_inst.bus_interconnect_inst.ADDR_RANGE2_END[31:0]
+TOP.top_tb.riscv_mcu_inst.bus_interconnect_inst.ADDR_RANGE2_START[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
