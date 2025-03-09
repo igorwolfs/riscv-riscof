@@ -1,8 +1,10 @@
 CPU_DIR := ../riscv_core/core_RV32I/
+VHDL_LIBS := ../riscv_core/vhdl_libs/
+
 TESTBENCH_NAME := top_tb
 
 #! NOTE: "find -name ''" looks for files recursively inside the SRC_DIR
-SRC_DIRS := ${CPU_DIR}
+SRC_DIRS := ${CPU_DIR} ${VHDL_LIBS}
 SRC_FILE := $(shell find $(SRC_DIRS) -name '*.v') $(shell find $(SRC_DIRS) -name '*.sv') \
 			$(shell find $(SRC_DIRS) -name '*.vh') $(shell find $(SRC_DIRS) -name '*.svh')
 
@@ -10,10 +12,10 @@ SRC_FILE := $(shell find $(SRC_DIRS) -name '*.v') $(shell find $(SRC_DIRS) -name
 CPP_FILE = sim_top_main.cpp
 # Verilator options
 VERILATOR_OPTS = -cc \
-    -Wno-NULLPORT \
-    -Wno-COMBDLY \
     -Wno-PINMISSING \
-    -Wno-MODDUP \
+    -Wno-ASSIGNIN \
+    -Wno-UNSIGNED \
+    -Wno-WIDTHEXPAND\
     --exe \
     --trace \
     --trace-structs \

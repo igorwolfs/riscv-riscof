@@ -16,8 +16,8 @@
     signature_dump:                                    \
       la   a0, begin_signature;                        \
       la   a1, sig_end_canary;                         \
-      addi a1, a1, 4;                         \
-      li   a2, 0xF0000004;                             \
+      addi a1, a1, 4;                                   \
+      li   a2, 0xF0000000;                             \
     signature_dump_loop:                               \
       bge  a0, a1, signature_dump_end;                 \
       lw   t0, 0(a0);                                  \
@@ -25,14 +25,17 @@
       addi a0, a0, 4;                                  \
       j    signature_dump_loop;                        \
     signature_dump_end:                                \
-      li   a0, 0xF0000000;                             \
+      li   a0, 0xF0000004;                             \
       li   a1, 0xCAFECAFE;                             \
     terminate_simulation:                              \
       sw   a1, 0(a0);                                  \
       j    terminate_simulation
 
-// initialize hardware platform: unused
-#define RVMODEL_BOOT
+// initialize hardware platform: unused (Set stack pointer here)
+#define RVMODEL_BOOT       \
+    lui  t0, 0x40000;      \
+    addi t0, t0, -1;       \
+    mv   sp, t0;
 
 // declare the start of your signature region here. Nothing else to be used here.
 #define RVMODEL_DATA_BEGIN                             \
