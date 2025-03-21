@@ -17,8 +17,6 @@ VERILATOR_OPTS = -cc \
     -Wno-UNSIGNED \
     -Wno-WIDTHEXPAND\
     --exe \
-    --trace \
-    --trace-structs \
     --build \
     --timing
 

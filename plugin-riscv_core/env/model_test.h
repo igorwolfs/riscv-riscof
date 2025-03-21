@@ -34,7 +34,7 @@
 // initialize hardware platform: unused (Set stack pointer here)
 #define RVMODEL_BOOT       \
     lui  t0, 0x40000;      \
-    addi t0, t0, -1;       \
+    addi t0, t0, -16;       \
     mv   sp, t0;
 
 // declare the start of your signature region here. Nothing else to be used here.
