@@ -116,7 +116,7 @@ class riscv_core(pluginTemplate):
 		# we will iterate over each entry in the testList. Each entry node will be referred to by the
 		# variable testname.
 		for idx, testname in enumerate(testList):
-			print(f"TESTNAME: {testname} [{idx} of {len(testList)}]")
+			print(f"TEST [{idx}] of [{len(testList)}]")
 			logger.debug('Running Test: {0} on DUT'.format(testname))
 			# for each testname we get all its fields (as described by the testList format)
 			testentry = testList[testname]
@@ -164,15 +164,8 @@ class riscv_core(pluginTemplate):
 			# Template is for spike. Please change for your DUT
 		
 	        # ---- RISCV_CORE-specific ----
-
-			print(f"Execute: test_dir: {test_dir}")
-			print(f"SIG PATH: {sig_file}")
-			print(f"WORK_DIRECTORY: {self.work_dir}")
-			print(f"SUITE_DIR: {self.suite_dir}")
 			sim_dir = os.path.join(os.path.dirname(self.work_dir), "sim")
-			print(f"SIM_DIR: {sim_dir}")
 			log_file = os.path.join(test_dir, "my.log")
-			print(f"LOG_FILE: {log_file}")
 			# launch the execute command. Change the test_dir if required.
 			# Convert to hex
 			execute = "riscv32-unknown-elf-objcopy my.elf -O binary my.bin"
